@@ -99,17 +99,148 @@ def solve_3631a71a(x):
 
     return x
 
-def solve_3631a71a(x):
-
-    
-    return x
-
 
 def get_new_location(centre, position):
     value = position - centre
     new = centre - value
     return new
 
+def solve_484b58aa(x):
+    
+    """
+    with this one we need to be able to detect the diagonal pattern
+    if the next diagonal square is the same as the previous then all are that colour
+    if not we will store the colour in a colour array and then move on
+    """
+    first_half = []
+
+    xdimension, ydimension = x.shape   
+    if xdimension == ydimension:
+        dimension = xdimension
+    #there are 30 diagonals and we need to loop through them
+    print(dimension)
+    for size_its in range(dimension):
+        actual_size = size_its + 1
+        array = x[:actual_size, :actual_size]
+        
+        
+        first_diagonals = np.flipud(array).diagonal()
+        first_half.append(first_diagonals)
+        
+
+        print(first_diagonals)
+
+    #print(array)
+    #array = np.flipud(array)
+    newx = x.copy()
+    newx = np.rot90(newx)
+    newx = np.rot90(newx)
+
+        
+    #print(newx)
+    second_half = []
+    
+    for size_its in range(dimension-1):
+        actual_size = size_its + 1
+        array = newx[:actual_size, :actual_size]
+        
+        second_diagonals = np.flipud(array).diagonal()
+        
+        print(second_diagonals)
+        second_half.append(np.flip(second_diagonals))
+        
+    #list of patterns
+    #we need to firstly select a half to train on 
+    first = np.array(first_half)
+    second = np.array(second_half)
+    
+    zero_count_first = 0
+    for i in first:
+        for j in i:
+            if j == 0:
+                zero_count_first = zero_count_first + 1
+                
+    zero_count_second = 0  
+    for i in second:
+        for j in i:
+            if j == 0:
+                zero_count_second = zero_count_second + 1
+                
+    print(zero_count_first)
+    print(zero_count_second)
+    
+    if zero_count_first <= zero_count_second:
+        training_set = first
+    else: 
+        training_set = second
+
+
+    training_set = training_set[5:]
+    pattern_list = []
+    for diagonal in training_set:
+        #we need to get the pattern
+        i = 0
+        pattern = []
+        for square_num in diagonal:
+            if i == 0:
+                pattern.append(square_num)
+                i = i + 1
+            elif square_num not in pattern:
+                pattern.append(square_num)
+                i = i + 1
+            else:
+                pattern_list.append(pattern)
+                break
+            
+    print("helper1")
+    print(pattern_list)
+    longest_pattern = [len(i) for i in pattern_list]
+    pattern_to_search = max(pattern_list, key=len)
+    #print(pattern_to_search)
+    print(pattern_list)
+    print("helper2")
+ 
+    index = 0
+    exitbool = False
+    for pattern in pattern_list:
+        index = index + 1
+        if pattern == pattern_to_search and exitbool == False:
+            actual_index = index
+            exitbool = True
+    
+    print(pattern_list)  
+    pattern_list = pattern_list[actual_index:]
+    print(pattern_list)
+    
+    all_patterns = []
+    all_patterns.append({1: pattern_to_search})
+    pattern_number = 1
+    pattern_found = False
+    for pattern in pattern_list:
+        pattern_number = pattern_number + 1
+        if pattern_found == False:
+            for i in range(4):
+                print(i)
+                print(pattern_to_search)
+                print(pattern)
+                if np.all(pattern_to_search==pattern):
+                    print("WE HAVE A PATTERN")
+                    pattern_found = True
+                else:
+                    #we need to label each pattern
+                    pattern_to_search = np.roll(pattern_to_search, 1)
+                    patterntoappend = {pattern_number: pattern}
+            
+            if pattern_found == False:
+                all_patterns.append(patterntoappend)
+                
+        #we are checking for the pattern we will roll 5 times 
+        
+    print(all_patterns)
+    
+    #now we have all the patterns and we need to assign them to the index of each
+    
+    return x
 
 
 def main():
@@ -167,11 +298,11 @@ def test(taskID, solve, data):
     print("Training grids")
     for x, y in zip(train_input, train_output):
         yhat = solve(x)
-        show_result(x, y, yhat)
+        #show_result(x, y, yhat)
     print("Test grids")
     for x, y in zip(test_input, test_output):
         yhat = solve(x)
-        show_result(x, y, yhat)
+        #show_result(x, y, yhat)
 
         
 def show_result(x, y, yhat):
