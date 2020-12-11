@@ -10,14 +10,116 @@ import re
 ### result. Name them according to the task ID as in the three
 ### examples below. Delete the three examples. The tasks you choose
 ### must be in the data/training directory, not data/evaluation.
-def solve_6a1e5592(x):
+def solve_3631a71a(x):
+    """
+    Rules for this example are 
+    1) all 4 squares are the same when we are in bounds 
+    2) when out of bounds then copy what also has this bounds 
+    """
+
+
+    xlen, ylen = x.shape
+    
+    xcounter = 1
+    ycounter = 1
+    xcentre = 16
+    ycentre = 16
+    square = 0 
+    pattern_size = 28
+    xymax = pattern_size/2
+    xmin = xcentre - xymax
+    ymin = ycentre - xymax
+    pattern_max = 30
+    
+    for yval in range(ylen):
+        xcounter = 1
+
+        for xval in range(ylen):
+            if x[yval][xval] == 9:
+                
+                
+                #square 1
+                if xcounter <= 16 and ycounter <= 16 and xcounter > xmin:
+                    get_new_location("")
+                    value = xcounter - xcentre
+                    xnew = xcentre - value
+                    
+                    if x[ycounter-1][xnew] ==  9:
+                        value = ycounter - ycentre
+                        ynew = ycentre - value
+                        x[yval][xval] = x[ynew][xcounter-1]    
+                    else:
+                        x[yval][xval] = x[ycounter-1][xnew]
+                        
+                #outside square 1 to the left side
+                elif xcounter <= xmin and ycounter > ymin and xcounter <= 16 and ycounter <= 16:
+                    value = ycounter - ycentre
+                    ynew = ycentre - value
+                    x[yval][xval] = x[ynew][xcounter-1]     
+                    
+                    
+                    
+                #square 2 
+                elif xcounter >= 16 and ycounter <= 16:
+                    value = xcounter - xcentre
+                    xnew = xcentre - value
+                    
+                    if x[ycounter-1][xnew] ==  9:
+                        value = ycounter - ycentre
+                        ynew = ycentre - value
+                        x[yval][xval] = x[ynew][xcounter-1] 
+                    else:
+                        x[yval][xval] = x[ycounter-1][xnew]    
+                        square = 2
+
+                    
+                #square 3 
+                elif xcounter <= 16 and ycounter >= 16  and xcounter > xmin:
+                    value = xcounter - xcentre
+                    xnew = xcentre - value
+                    
+                    if x[ycounter-1][xnew] == 9:
+                        value = ycounter - ycentre
+                        ynew = ycentre - value
+                        x[yval][xval] = x[ynew][xcounter-1] 
+                    else:
+                        x[yval][xval] = x[ycounter-1][xnew]
+                        
+                #outside square 3 to the left side
+                elif xcounter <= xmin and ycounter > ymin and xcounter <= 16 and ycounter >= 16:                    
+                    value = ycounter - ycentre
+                    ynew = ycentre - value
+                    x[yval][xval] = x[ynew][xcounter-1] 
+                    
+                    
+                    
+                #square 4
+                elif xcounter >= 16 and ycounter >= 16:
+                    value = xcounter - xcentre
+                    xnew = xcentre - value
+                    if x[ycounter-1][xnew]  == 9:
+                        value = ycounter - ycentre
+                        ynew = ycentre - value
+                        x[yval][xval] = x[ynew][xcounter-1] 
+                    else:
+                        x[yval][xval] = x[ycounter-1][xnew] 
+                    
+                    
+            xcounter = xcounter + 1 
+        ycounter = ycounter + 1 
+
     return x
 
-def solve_b2862040(x):
-    return x
 
-def solve_05269061(x):
-    return x
+def get_new_location(xy, x, value, centre, counter):
+    if xy == "x":
+        value = counter - centre
+        xnew = centre - value
+        return xnew
+    elif xy == "y":
+        value = counter - centre
+        ynew = centre - value
+        return ynew
 
 
 def main():
@@ -39,8 +141,12 @@ def main():
 
     for ID, solve_fn in tasks_solvers:
         # for each task, read the data and call test()
-        directory = os.path.join("..", "data", "training")
-        json_filename = os.path.join(directory, ID + ".json")
+        #directory = os.path.join("..", "data", "training")
+        print(os.getcwd())
+        #os.chdir("ARC/data/training")
+        print(os.getcwd())
+        #directory = "../data/training/"
+        json_filename = os.path.join(os.getcwd(), ID + ".json")
         data = read_ARC_JSON(json_filename)
         test(ID, solve_fn, data)
     
