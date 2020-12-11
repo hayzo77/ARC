@@ -40,66 +40,55 @@ def solve_3631a71a(x):
                 
                 #square 1
                 if xcounter <= 16 and ycounter <= 16 and xcounter > xmin:
-                    get_new_location("")
-                    value = xcounter - xcentre
-                    xnew = xcentre - value
+                    xnew = get_new_location(xcentre, xcounter)
                     
                     if x[ycounter-1][xnew] ==  9:
-                        value = ycounter - ycentre
-                        ynew = ycentre - value
+                        ynew = get_new_location(ycentre, ycounter)
                         x[yval][xval] = x[ynew][xcounter-1]    
                     else:
                         x[yval][xval] = x[ycounter-1][xnew]
                         
                 #outside square 1 to the left side
                 elif xcounter <= xmin and ycounter > ymin and xcounter <= 16 and ycounter <= 16:
-                    value = ycounter - ycentre
-                    ynew = ycentre - value
+                    ynew = get_new_location(ycentre, ycounter)
                     x[yval][xval] = x[ynew][xcounter-1]     
                     
                     
                     
                 #square 2 
                 elif xcounter >= 16 and ycounter <= 16:
-                    value = xcounter - xcentre
-                    xnew = xcentre - value
-                    
+                    xnew = get_new_location(xcentre, xcounter)
+
                     if x[ycounter-1][xnew] ==  9:
-                        value = ycounter - ycentre
-                        ynew = ycentre - value
+                        ynew = get_new_location(ycentre, ycounter)
                         x[yval][xval] = x[ynew][xcounter-1] 
                     else:
                         x[yval][xval] = x[ycounter-1][xnew]    
-                        square = 2
 
                     
                 #square 3 
                 elif xcounter <= 16 and ycounter >= 16  and xcounter > xmin:
-                    value = xcounter - xcentre
-                    xnew = xcentre - value
+                    xnew = get_new_location(xcentre, xcounter)
                     
                     if x[ycounter-1][xnew] == 9:
-                        value = ycounter - ycentre
-                        ynew = ycentre - value
+                        ynew = get_new_location(ycentre, ycounter)
                         x[yval][xval] = x[ynew][xcounter-1] 
                     else:
                         x[yval][xval] = x[ycounter-1][xnew]
                         
                 #outside square 3 to the left side
                 elif xcounter <= xmin and ycounter > ymin and xcounter <= 16 and ycounter >= 16:                    
-                    value = ycounter - ycentre
-                    ynew = ycentre - value
+                    ynew = get_new_location(ycentre, ycounter)
+
                     x[yval][xval] = x[ynew][xcounter-1] 
                     
                     
                     
                 #square 4
                 elif xcounter >= 16 and ycounter >= 16:
-                    value = xcounter - xcentre
-                    xnew = xcentre - value
+                    xnew = get_new_location(xcentre, xcounter)
                     if x[ycounter-1][xnew]  == 9:
-                        value = ycounter - ycentre
-                        ynew = ycentre - value
+                        ynew = get_new_location(ycentre, ycounter)
                         x[yval][xval] = x[ynew][xcounter-1] 
                     else:
                         x[yval][xval] = x[ycounter-1][xnew] 
@@ -110,16 +99,17 @@ def solve_3631a71a(x):
 
     return x
 
+def solve_3631a71a(x):
 
-def get_new_location(xy, x, value, centre, counter):
-    if xy == "x":
-        value = counter - centre
-        xnew = centre - value
-        return xnew
-    elif xy == "y":
-        value = counter - centre
-        ynew = centre - value
-        return ynew
+    
+    return x
+
+
+def get_new_location(centre, position):
+    value = position - centre
+    new = centre - value
+    return new
+
 
 
 def main():
