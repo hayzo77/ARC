@@ -10,94 +10,94 @@ import re
 ### result. Name them according to the task ID as in the three
 ### examples below. Delete the three examples. The tasks you choose
 ### must be in the data/training directory, not data/evaluation.
-def solve_3631a71a(x):
-    """
-    Rules for this example are 
-    1) all 4 squares are the same when we are in bounds 
-    2) when out of bounds then copy what also has this bounds 
-    """
+# def solve_3631a71a(x):
+#     """
+#     Rules for this example are 
+#     1) all 4 squares are the same when we are in bounds 
+#     2) when out of bounds then copy what also has this bounds 
+#     """
 
 
-    xlen, ylen = x.shape
+#     xlen, ylen = x.shape
     
-    xcounter = 1
-    ycounter = 1
-    xcentre = 16
-    ycentre = 16
-    square = 0 
-    pattern_size = 28
-    xymax = pattern_size/2
-    xmin = xcentre - xymax
-    ymin = ycentre - xymax
-    pattern_max = 30
+#     xcounter = 1
+#     ycounter = 1
+#     xcentre = 16
+#     ycentre = 16
+#     square = 0 
+#     pattern_size = 28
+#     xymax = pattern_size/2
+#     xmin = xcentre - xymax
+#     ymin = ycentre - xymax
+#     pattern_max = 30
     
-    for yval in range(ylen):
-        xcounter = 1
+#     for yval in range(ylen):
+#         xcounter = 1
 
-        for xval in range(ylen):
-            if x[yval][xval] == 9:
+#         for xval in range(ylen):
+#             if x[yval][xval] == 9:
                 
                 
-                #square 1
-                if xcounter <= 16 and ycounter <= 16 and xcounter > xmin:
-                    xnew = get_new_location(xcentre, xcounter)
+#                 #square 1
+#                 if xcounter <= 16 and ycounter <= 16 and xcounter > xmin:
+#                     xnew = get_new_location(xcentre, xcounter)
                     
-                    if x[ycounter-1][xnew] ==  9:
-                        ynew = get_new_location(ycentre, ycounter)
-                        x[yval][xval] = x[ynew][xcounter-1]    
-                    else:
-                        x[yval][xval] = x[ycounter-1][xnew]
+#                     if x[ycounter-1][xnew] ==  9:
+#                         ynew = get_new_location(ycentre, ycounter)
+#                         x[yval][xval] = x[ynew][xcounter-1]    
+#                     else:
+#                         x[yval][xval] = x[ycounter-1][xnew]
                         
-                #outside square 1 to the left side
-                elif xcounter <= xmin and ycounter > ymin and xcounter <= 16 and ycounter <= 16:
-                    ynew = get_new_location(ycentre, ycounter)
-                    x[yval][xval] = x[ynew][xcounter-1]     
+#                 #outside square 1 to the left side
+#                 elif xcounter <= xmin and ycounter > ymin and xcounter <= 16 and ycounter <= 16:
+#                     ynew = get_new_location(ycentre, ycounter)
+#                     x[yval][xval] = x[ynew][xcounter-1]     
                     
                     
                     
-                #square 2 
-                elif xcounter >= 16 and ycounter <= 16:
-                    xnew = get_new_location(xcentre, xcounter)
+#                 #square 2 
+#                 elif xcounter >= 16 and ycounter <= 16:
+#                     xnew = get_new_location(xcentre, xcounter)
 
-                    if x[ycounter-1][xnew] ==  9:
-                        ynew = get_new_location(ycentre, ycounter)
-                        x[yval][xval] = x[ynew][xcounter-1] 
-                    else:
-                        x[yval][xval] = x[ycounter-1][xnew]    
+#                     if x[ycounter-1][xnew] ==  9:
+#                         ynew = get_new_location(ycentre, ycounter)
+#                         x[yval][xval] = x[ynew][xcounter-1] 
+#                     else:
+#                         x[yval][xval] = x[ycounter-1][xnew]    
 
                     
-                #square 3 
-                elif xcounter <= 16 and ycounter >= 16  and xcounter > xmin:
-                    xnew = get_new_location(xcentre, xcounter)
+#                 #square 3 
+#                 elif xcounter <= 16 and ycounter >= 16  and xcounter > xmin:
+#                     xnew = get_new_location(xcentre, xcounter)
                     
-                    if x[ycounter-1][xnew] == 9:
-                        ynew = get_new_location(ycentre, ycounter)
-                        x[yval][xval] = x[ynew][xcounter-1] 
-                    else:
-                        x[yval][xval] = x[ycounter-1][xnew]
+#                     if x[ycounter-1][xnew] == 9:
+#                         ynew = get_new_location(ycentre, ycounter)
+#                         x[yval][xval] = x[ynew][xcounter-1] 
+#                     else:
+#                         x[yval][xval] = x[ycounter-1][xnew]
                         
-                #outside square 3 to the left side
-                elif xcounter <= xmin and ycounter > ymin and xcounter <= 16 and ycounter >= 16:                    
-                    ynew = get_new_location(ycentre, ycounter)
+#                 #outside square 3 to the left side
+#                 elif xcounter <= xmin and ycounter > ymin and xcounter <= 16 and ycounter >= 16:                    
+#                     ynew = get_new_location(ycentre, ycounter)
 
-                    x[yval][xval] = x[ynew][xcounter-1] 
+#                     x[yval][xval] = x[ynew][xcounter-1] 
                     
                     
                     
-                #square 4
-                elif xcounter >= 16 and ycounter >= 16:
-                    xnew = get_new_location(xcentre, xcounter)
-                    if x[ycounter-1][xnew]  == 9:
-                        ynew = get_new_location(ycentre, ycounter)
-                        x[yval][xval] = x[ynew][xcounter-1] 
-                    else:
-                        x[yval][xval] = x[ycounter-1][xnew] 
+#                 #square 4
+#                 elif xcounter >= 16 and ycounter >= 16:
+#                     xnew = get_new_location(xcentre, xcounter)
+#                     if x[ycounter-1][xnew]  == 9:
+#                         ynew = get_new_location(ycentre, ycounter)
+#                         x[yval][xval] = x[ynew][xcounter-1] 
+#                     else:
+#                         x[yval][xval] = x[ycounter-1][xnew] 
                     
                     
-            xcounter = xcounter + 1 
-        ycounter = ycounter + 1 
+#             xcounter = xcounter + 1 
+#         ycounter = ycounter + 1 
 
-    return x
+#     return x
 
 
 def get_new_location(centre, position):
@@ -118,7 +118,7 @@ def solve_484b58aa(x):
     if xdimension == ydimension:
         dimension = xdimension
     #there are 30 diagonals and we need to loop through them
-    print(dimension)
+    #print(dimension)
     for size_its in range(dimension):
         actual_size = size_its + 1
         array = x[:actual_size, :actual_size]
@@ -128,7 +128,7 @@ def solve_484b58aa(x):
         first_half.append(first_diagonals)
         
 
-        print(first_diagonals)
+        #print(first_diagonals)
 
     #print(array)
     #array = np.flipud(array)
@@ -146,7 +146,7 @@ def solve_484b58aa(x):
         
         second_diagonals = np.flipud(array).diagonal()
         
-        print(second_diagonals)
+        #print(second_diagonals)
         second_half.append(np.flip(second_diagonals))
         
     #list of patterns
@@ -154,25 +154,8 @@ def solve_484b58aa(x):
     first = np.array(first_half)
     second = np.array(second_half)
     
-    zero_count_first = 0
-    for i in first:
-        for j in i:
-            if j == 0:
-                zero_count_first = zero_count_first + 1
-                
-    zero_count_second = 0  
-    for i in second:
-        for j in i:
-            if j == 0:
-                zero_count_second = zero_count_second + 1
-                
-    print(zero_count_first)
-    print(zero_count_second)
-    
-    if zero_count_first <= zero_count_second:
-        training_set = first
-    else: 
-        training_set = second
+
+    training_set = second
 
 
     training_set = training_set[5:]
@@ -192,13 +175,13 @@ def solve_484b58aa(x):
                 pattern_list.append(pattern)
                 break
             
-    print("helper1")
-    print(pattern_list)
+    #print("helper1")
+    #print(pattern_list)
     longest_pattern = [len(i) for i in pattern_list]
     pattern_to_search = max(pattern_list, key=len)
     #print(pattern_to_search)
-    print(pattern_list)
-    print("helper2")
+    #print(pattern_list)
+    #print("helper2")
  
     index = 0
     exitbool = False
@@ -208,47 +191,53 @@ def solve_484b58aa(x):
             actual_index = index
             exitbool = True
     
-    print(pattern_list)  
+    #print(pattern_list)  
     pattern_list = pattern_list[actual_index:]
-    print(pattern_list)
+    #print(pattern_list)
     
+    pattern_dict = {}
     all_patterns = []
+    d = {1: pattern_to_search}
+    pattern_dict.update(d)
     all_patterns.append({1: pattern_to_search})
     pattern_number = 1
     pattern_found = False
     number_of_patterns = 1
+    
+    
     for pattern in pattern_list:
         pattern_number = pattern_number + 1
         if pattern_found == False:
             for i in range(4):
-                print(i)
-                print(pattern_to_search)
-                print(pattern)
+                #print(i)
+                #print(pattern_to_search)
+                #print(pattern)
                 if np.all(pattern_to_search==pattern):
-                    print("WE HAVE A PATTERN")
+                    #print("WE HAVE A PATTERN")
                     pattern_found = True
                 else:
                     #we need to label each pattern
                     pattern_to_search = np.roll(pattern_to_search, 1)
                     patterntoappend = {pattern_number: pattern}
-            
+                    d = {pattern_number: pattern}
             if pattern_found == False:
+                pattern_dict.update(d)
                 all_patterns.append(patterntoappend)
                 number_of_patterns = number_of_patterns + 1
 
                 
         #we are checking for the pattern we will roll 5 times 
         
-    print(all_patterns)
+    #print(all_patterns)
 
     second_reversed = []
 
     for i in range(second.size):
         second_reversed.append(second[second.size - (i + 1)])
     
-    print(first)
-    print("first_done")
-    print(second_reversed)
+    #print(first)
+    #print("first_done")
+    #print(second_reversed)
     
     all_data = []
     for i in first:
@@ -257,19 +246,19 @@ def solve_484b58aa(x):
         all_data.append(j)
 
     all_data_numpy = np.array(all_data)        
-    print("")
-    print("")
-    print(all_data_numpy.size)
+    #print("")
+    #print("")
+    #print(all_data_numpy.size)
     
     
     #now we need to tag each one with their respective patttern        
-    print(all_patterns)
+    #print(all_patterns)
     
     #lets take the middle one and move right by the number of patterns
     
-    print(number_of_patterns)
+    #print(number_of_patterns)
     pattern_max = 28 + number_of_patterns
-    print(pattern_max)
+    #print(pattern_max)
     
     pattern_recognition = []
     
@@ -289,18 +278,18 @@ def solve_484b58aa(x):
     match_index = 28
     for pattern in pattern_recognition:
         match_index = match_index + 1
-        print(pattern[:pattern_size])
-        print(pattern_to_search)
+        #print(pattern[:pattern_size])
+        #print(pattern_to_search)
         for i in range(8):
             if np.all(pattern_to_search==pattern[:pattern_size]):
-                print("WE HAVE A PATTERN")
+                #print("WE HAVE A PATTERN")
                 final_match_index = match_index
                 #pattern_found = True
             else:
                 #we need to label each pattern
                 pattern_to_search = np.roll(pattern_to_search, 1)
     
-    print(final_match_index)
+    #print(final_match_index)
     #pattern 1 matches index 30 so we need to iterate over all others
     #and index them 
     
@@ -310,17 +299,18 @@ def solve_484b58aa(x):
     before_match_list = all_data_numpy[:final_match_index]
     after_match_list = all_data_numpy[final_match_index:]
     
-    print(before_match_list)
-    print("")
-    print("")
-    print(after_match_list)
+    #print(before_match_list)
+    #print("")
+    #print("")
+    #print(after_match_list)
     
     pattern_index_list = np.zeros((all_data_numpy.size,), dtype=int)
     #print(pattern_index_list)
     
     #now we need to loop through each and assign pattern value to each
-    idx = (before_match_list.size)-1
+    idx = (before_match_list.size)  
     patternidx = 1
+    count = 0
     for l in before_match_list:
         
         pattern_index_list[idx] = patternidx
@@ -331,29 +321,183 @@ def solve_484b58aa(x):
             patternidx = patternidx + 1
             
         idx = idx - 1
+        count = count + 1
 
-
+    #if pattern last was 2
+    #decrement by 1 
     
-    idx = (after_match_list.size)+2
+    #print("key")
+    #print(pattern_index_list)
+    
+    patternidx = patternidx - 2
+    if patternidx == 0:
+        patternidx = number_of_patterns - 1
+        
+    #print("essential")
+    #print(number_of_patterns)
+    #print(patternidx)
+    idx = (before_match_list.size)
+    #print("absolutely key")
+    #print(idx)
     patternidx = 1
-    print(pattern_index_list)
-    for l in after_match_list:
+    #print(pattern_index_list)
+    #print(after_match_list)
+    
+    loopfor = pattern_index_list.size - count
+    #print(loopfor)
+    #print(count)
+    for l in range(loopfor):
         
         
         pattern_index_list[idx] = patternidx
         
-        if patternidx == number_of_patterns:
-            patternidx = 1
+        if patternidx == 1:
+            patternidx = number_of_patterns
+        #elif patternidx == number_of_patterns:
+            #patternidx = 1        
         else:
-            patternidx = patternidx + 1
-            
+            patternidx = patternidx - 1
+        #print(idx)
         idx = idx + 1
         
-        
-
-    print(pattern_index_list)
+    #nowe we have 2 lists
+    #one for each diagonal array
+    #and one with that arrays corresponding pattern
     
-    return x
+    #list_names
+    """
+    #pattern_index_list
+    #all_data_numpy
+    #all_patterns
+    """
+    
+    #print(pattern_index_list)
+    #print(all_data_numpy)
+    #print(all_patterns)
+    
+    #all_patterns = all_patterns[0]
+    
+    #print("")
+    #print("")
+    #print(pattern_dict)
+    #now we need to loop through each line of the original data
+    #if there is a zero in it 
+    #we need to get its previous digit and fix the zero
+    #by using its dedicated pattern
+    
+    i = 0
+    new_data = []
+    for data in all_data_numpy:
+        #print("i")
+        #print(i)
+        #print(data)
+
+        patternkey = pattern_index_list[i]
+        updated_data = []
+        if len(data) == 1:
+            updated_data.append(data[0])
+            
+        if(patternkey != 0):
+            #lets get the pattern for each array of data
+            #print(patternkey)
+            #now we need to lookup the actual pattern
+            actual_pattern = pattern_dict[patternkey]
+            #print("should be actual pattern", actual_pattern)
+            old_square = 50
+            #print(data)
+            for square in data:
+                if square == 0:
+                    #we need to update the sqaure 
+                    #print("old square",{old_square})
+                    #print("")
+                    
+                    if len(actual_pattern) == 1:
+                        square = old_square
+                        updated_data.append(square)
+                    else:
+                        #here we need to check the pattern
+                        #print("need word")
+                        
+                        new_pattern = list(actual_pattern)
+                        
+                        detected = False
+                        for j in range(len(new_pattern)):
+                            #print("new pattern first element",{new_pattern[0]})
+                            #print("old square", {old_square})
+                            #print("detected",{detected})
+                            
+                            if new_pattern[0] == old_square and detected == False:
+                                updated_data.append(new_pattern[1])
+                                #print("should be new word", {new_pattern[1]})
+                                detected = True
+                                old_square = new_pattern[1]
+
+                            else:
+                                new_pattern = np.roll(new_pattern, 1)
+                                
+                    #update old_square
+                else:
+                    updated_data.append(square)
+                    old_square = square
+        i = i + 1
+        #print(updated_data)
+        new_data.append(updated_data)
+        
+    #print(new_data)
+    #now we have to fill the dataset back up 
+    
+    
+    
+    
+    
+    #final_np_array = np.array(30,30)
+    
+    #print(x)
+    
+    for size_its in range(dimension):
+        actual_size = size_its + 1
+        array = x[:actual_size, :actual_size]
+        #print(array)
+        np.fill_diagonal(np.flipud(array), new_data[size_its])
+        data_size = size_its
+
+    #print(x)
+    xcopy = x.copy()
+    xcopy = np.rot90(xcopy)
+    xcopy = np.rot90(xcopy)   
+    #print("xcopy")
+    #print(xcopy)
+    
+    c = 0
+
+    for size_its in reversed(range(dimension)):
+        print(size_its)
+        actual_size = size_its + 1
+        array = xcopy[:actual_size, :actual_size]
+        
+        print(new_data[data_size+c])
+        
+        #dat = new_data[data_size+c]
+        #print(dat)
+        #reverse_data = dat.reverse()
+        #print(reverse_data)
+        dat = new_data[data_size+c]
+        #print(dat[::-1])
+        #np.fill_diagonal(np.flipud(array), new_data[data_size+c])
+        np.fill_diagonal(np.flipud(array), dat[::-1])
+
+        c = c + 1
+        
+    #print("xcopy after")
+    #print(xcopy)
+    
+    xcopy = np.rot90(xcopy)
+    xcopy = np.rot90(xcopy)
+    
+    #print(xcopy)
+    #print(x)
+    
+    return xcopy
 
 
 def main():
@@ -409,18 +553,20 @@ def test(taskID, solve, data):
     print(taskID)
     train_input, train_output, test_input, test_output = data
     print("Training grids")
-    #for x, y in zip(train_input, train_output):
-        #yhat = solve(x)
-        #show_result(x, y, yhat)
+    for xtest, y in zip(train_input, train_output):
+        yhat = solve(xtest)
+        print("starting")
+        show_result(xtest, y, yhat)
+        #return
     print("Test grids")
     for x, y in zip(test_input, test_output):
         yhat = solve(x)
-        #show_result(x, y, yhat)
+        show_result(x, y, yhat)
 
         
-def show_result(x, y, yhat):
+def show_result(xtest, y, yhat):
     print("Input")
-    print(x)
+    print(xtest)
     print("Correct output")
     print(y)
     print("Our output")
