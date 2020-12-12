@@ -216,6 +216,7 @@ def solve_484b58aa(x):
     all_patterns.append({1: pattern_to_search})
     pattern_number = 1
     pattern_found = False
+    number_of_patterns = 1
     for pattern in pattern_list:
         pattern_number = pattern_number + 1
         if pattern_found == False:
@@ -233,12 +234,124 @@ def solve_484b58aa(x):
             
             if pattern_found == False:
                 all_patterns.append(patterntoappend)
+                number_of_patterns = number_of_patterns + 1
+
                 
         #we are checking for the pattern we will roll 5 times 
         
     print(all_patterns)
+
+    second_reversed = []
+
+    for i in range(second.size):
+        second_reversed.append(second[second.size - (i + 1)])
     
-    #now we have all the patterns and we need to assign them to the index of each
+    print(first)
+    print("first_done")
+    print(second_reversed)
+    
+    all_data = []
+    for i in first:
+        all_data.append(i)
+    for j in second_reversed:
+        all_data.append(j)
+
+    all_data_numpy = np.array(all_data)        
+    print("")
+    print("")
+    print(all_data_numpy.size)
+    
+    
+    #now we need to tag each one with their respective patttern        
+    print(all_patterns)
+    
+    #lets take the middle one and move right by the number of patterns
+    
+    print(number_of_patterns)
+    pattern_max = 28 + number_of_patterns
+    print(pattern_max)
+    
+    pattern_recognition = []
+    
+    counter = 0
+    for i in all_data_numpy:
+        if counter >= 29 and counter <= pattern_max:
+            pattern_recognition.append(i)
+        counter = counter + 1
+        
+    pattern_recognition = np.array(pattern_recognition)
+    #now we need to see which one matches the pattern
+    
+    
+    pattern_size = pattern_to_search.size
+    
+    final_match_index = 0
+    match_index = 28
+    for pattern in pattern_recognition:
+        match_index = match_index + 1
+        print(pattern[:pattern_size])
+        print(pattern_to_search)
+        for i in range(8):
+            if np.all(pattern_to_search==pattern[:pattern_size]):
+                print("WE HAVE A PATTERN")
+                final_match_index = match_index
+                #pattern_found = True
+            else:
+                #we need to label each pattern
+                pattern_to_search = np.roll(pattern_to_search, 1)
+    
+    print(final_match_index)
+    #pattern 1 matches index 30 so we need to iterate over all others
+    #and index them 
+    
+    #we need to take all elements after 30
+    #and take all elements before 30 
+    
+    before_match_list = all_data_numpy[:final_match_index]
+    after_match_list = all_data_numpy[final_match_index:]
+    
+    print(before_match_list)
+    print("")
+    print("")
+    print(after_match_list)
+    
+    pattern_index_list = np.zeros((all_data_numpy.size,), dtype=int)
+    #print(pattern_index_list)
+    
+    #now we need to loop through each and assign pattern value to each
+    idx = (before_match_list.size)-1
+    patternidx = 1
+    for l in before_match_list:
+        
+        pattern_index_list[idx] = patternidx
+        
+        if patternidx == number_of_patterns:
+            patternidx = 1
+        else:
+            patternidx = patternidx + 1
+            
+        idx = idx - 1
+
+
+    
+    idx = (after_match_list.size)+2
+    patternidx = 1
+    print(pattern_index_list)
+    for l in after_match_list:
+        
+        
+        pattern_index_list[idx] = patternidx
+        
+        if patternidx == number_of_patterns:
+            patternidx = 1
+        else:
+            patternidx = patternidx + 1
+            
+        idx = idx + 1
+        
+        
+
+    print(pattern_index_list)
     
     return x
 
@@ -296,8 +409,8 @@ def test(taskID, solve, data):
     print(taskID)
     train_input, train_output, test_input, test_output = data
     print("Training grids")
-    for x, y in zip(train_input, train_output):
-        yhat = solve(x)
+    #for x, y in zip(train_input, train_output):
+        #yhat = solve(x)
         #show_result(x, y, yhat)
     print("Test grids")
     for x, y in zip(test_input, test_output):
