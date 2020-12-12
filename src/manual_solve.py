@@ -107,6 +107,7 @@ def get_new_location(centre, position):
 
 def solve_484b58aa(x):
     
+    print(x)
     """
     with this one we need to be able to detect the diagonal pattern
     if the next diagonal square is the same as the previous then all are that colour
@@ -371,9 +372,9 @@ def solve_484b58aa(x):
     #all_patterns
     """
     
-    #print(pattern_index_list)
+    print(pattern_index_list)
     #print(all_data_numpy)
-    #print(all_patterns)
+    print(all_patterns)
     
     #all_patterns = all_patterns[0]
     
@@ -390,7 +391,16 @@ def solve_484b58aa(x):
     for data in all_data_numpy:
         #print("i")
         #print(i)
-        #print(data)
+        #print("data 0")
+        #print(data[0])
+        
+        backwards_approach = False
+        if data[0] == 0:
+            print(data)
+            backwards_approach = True 
+            data = np.flip(data)
+            print(data)
+            #we are going to have to have a different approach
 
         patternkey = pattern_index_list[i]
         updated_data = []
@@ -405,7 +415,19 @@ def solve_484b58aa(x):
             #print("should be actual pattern", actual_pattern)
             old_square = 50
             #print(data)
+            first_square = 0
             for square in data:
+                first_square = first_square + 1
+                
+                if backwards_approach == True and first_square == 1:
+                    new_pattern = list(actual_pattern)
+                    pattern = new_pattern.reverse()
+                    #new_pattern.append(pattern)
+                    #new_pattern = list(new_pattern)
+                    print("reversed")
+                    print(new_pattern)
+                    
+                    
                 if square == 0:
                     #we need to update the sqaure 
                     #print("old square",{old_square})
@@ -418,7 +440,9 @@ def solve_484b58aa(x):
                         #here we need to check the pattern
                         #print("need word")
                         
-                        new_pattern = list(actual_pattern)
+                        if backwards_approach == False:
+                            new_pattern = list(actual_pattern)
+                        
                         
                         detected = False
                         for j in range(len(new_pattern)):
@@ -426,14 +450,30 @@ def solve_484b58aa(x):
                             #print("old square", {old_square})
                             #print("detected",{detected})
                             
-                            if new_pattern[0] == old_square and detected == False:
-                                updated_data.append(new_pattern[1])
-                                #print("should be new word", {new_pattern[1]})
-                                detected = True
-                                old_square = new_pattern[1]
-
-                            else:
-                                new_pattern = np.roll(new_pattern, 1)
+                            if backwards_approach == False:
+                                if new_pattern[0] == old_square and detected == False:
+                                    updated_data.append(new_pattern[1])
+                                    #print("should be new word", {new_pattern[1]})
+                                    detected = True
+                                    old_square = new_pattern[1]
+    
+                                else:
+                                    new_pattern = np.roll(new_pattern, 1)
+                            elif backwards_approach == True:
+                                print("key")
+                                print(patternkey)
+                                print(new_pattern)
+                                print()
+                                if new_pattern[0] == old_square and detected == False:
+                                    updated_data.append(new_pattern[1])
+                                    #print("should be new word", {new_pattern[1]})
+                                    detected = True
+                                    old_square = new_pattern[1]
+    
+                                else:
+                                    new_pattern = np.roll(new_pattern, 1)                          
+                                
+                                
                                 
                     #update old_square
                 else:
@@ -471,11 +511,11 @@ def solve_484b58aa(x):
     c = 0
 
     for size_its in reversed(range(dimension)):
-        print(size_its)
+        #print(size_its)
         actual_size = size_its + 1
         array = xcopy[:actual_size, :actual_size]
         
-        print(new_data[data_size+c])
+        #print(new_data[data_size+c])
         
         #dat = new_data[data_size+c]
         #print(dat)
@@ -559,9 +599,9 @@ def test(taskID, solve, data):
         show_result(xtest, y, yhat)
         #return
     print("Test grids")
-    for x, y in zip(test_input, test_output):
-        yhat = solve(x)
-        show_result(x, y, yhat)
+    #for x, y in zip(test_input, test_output):
+        #yhat = solve(x)
+        #show_result(x, y, yhat)
 
         
 def show_result(xtest, y, yhat):
