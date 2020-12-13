@@ -461,7 +461,7 @@ def solve_484b58aa(x):
                                     new_pattern = np.roll(new_pattern, 1)
                             elif backwards_approach == True:
                                 print("key")
-                                print(patternkey)
+                                print(old_square)
                                 print(new_pattern)
                                 print()
                                 if new_pattern[0] == old_square and detected == False:
@@ -481,7 +481,13 @@ def solve_484b58aa(x):
                     old_square = square
         i = i + 1
         #print(updated_data)
-        new_data.append(updated_data)
+        
+        if backwards_approach == True:
+            updated_data = updated_data[::-1]
+            new_data.append(updated_data)
+            
+        else:
+            new_data.append(updated_data)
         
     #print(new_data)
     #now we have to fill the dataset back up 
@@ -599,9 +605,9 @@ def test(taskID, solve, data):
         show_result(xtest, y, yhat)
         #return
     print("Test grids")
-    #for x, y in zip(test_input, test_output):
-        #yhat = solve(x)
-        #show_result(x, y, yhat)
+    for x, y in zip(test_input, test_output):
+        yhat = solve(x)
+        show_result(x, y, yhat)
 
         
 def show_result(xtest, y, yhat):
