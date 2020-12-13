@@ -540,6 +540,182 @@ import re
 #     return xcopy
 
 
+def solve_c8cbb738(x):
+    
+    #THE BEST OPTION HERE IS
+    #WE NEED TO DETECT THE SHAPES 
+    #FORGET ALL OTHERS FOR THE TIME BEING
+    #GET THE CENTRE AND REMOVE THE REST 
+    #WHEN WE HAVE ALL SHAPES APPEND THEM ALL TOGETHER
+    
+    xlen, ylen = x.shape
+    all_colours = []
+    base_colour = 0
+
+    if x[xlen-1][ylen-1] == x[0][0]:
+        base_colour = x[0][0]
+    
+    for xi in x:
+        for y in xi: 
+            if y not in all_colours:
+                all_colours.append(y)
+    
+    all_colours.remove(base_colour)
+    
+    
+    
+    all_colour_locations = []
+    colour_array = []
+    for colour in all_colours:
+        xcolour = x.copy()
+        colour_array.append(xcolour)
+        colour_locations = []
+        for xi in range(xlen):
+            for y in range(ylen):
+                #print(xi)
+                #print(y)
+                #print(x[y-1][xi-1])
+                if np.all(x[xi][y]==colour):
+                    location = (xi,y)
+                    colour_locations.append(location)
+                    #print("locations")
+                    #print(xi)
+                    #print(y)
+        all_colour_locations.append(colour_locations)
+    #print(all_colour_locations)
+    #print(x)
+    
+    symetrical_list = np.zeros(len(all_colour_locations))
+    #print(symetrical_list)
+    
+    print(all_colour_locations)
+    for i in range(4): 
+        print("keynew")
+        print(i)
+        print(all_colour_locations[i][0][0])
+        print(all_colour_locations[i][1][0])
+        print(all_colour_locations[i][2][0])
+        print(all_colour_locations[i][3][0])
+
+        if all_colour_locations[i][0][0] == all_colour_locations[i][1][0] and all_colour_locations[i][2][0] == all_colour_locations[i][3][0]: 
+            symetrical_list[i] = 1
+        else:
+            symetrical_list[i] = 0
+    print(symetrical_list)
+    
+    #now we know what shape it is 
+    #then we can treat them a certain way
+    
+    for i in range(len(all_colour_locations)):
+        #print(colour_array[i])
+
+        #now we need to parse these individually based on the locations
+        
+        if symetrical_list[i] == 0:
+            for j in range(len(all_colour_locations[i])):
+                array = colour_array[i]
+                val = all_colour_locations[i][j][0]
+                #print("telling")
+                #print(all_colour_locations[i][3][1])
+                if j == 0:
+                    colour_array[i] = array[:,:all_colour_locations[i][2][1]+1]
+                elif j == 1:
+                    colour_array[i] = array[:all_colour_locations[i][3][0]+1,:]
+                elif j == 2:
+                    colour_array[i] = array[all_colour_locations[i][0][0]:, :]
+                elif j == 3:
+                    colour_array[i] = array[:,all_colour_locations[i][1][1]:]
+                #print(colour_array[i])
+
+            #we parse a different way
+        else:
+            #print(colour_array[i])
+
+            for k in range(len(all_colour_locations[i])):
+                array = colour_array[i]
+                val = all_colour_locations[i][k][0]
+                #print("key")
+                #print(all_colour_locations[i][k][0])
+                if k == 0:
+                    colour_array[i] = array[:,:all_colour_locations[i][1][1]+1]
+                elif k == 1:
+                    colour_array[i] = array[:all_colour_locations[i][3][0]+1,:]
+                elif k == 2:
+                    colour_array[i] = array[all_colour_locations[i][0][0]:, :]
+                elif k == 3:
+                    colour_array[i] = array[:,all_colour_locations[i][2][1]:]
+                #now we need to do the same but with a srectangle in mind
+                #print(colour_array[i])
+
+    xshapes = []
+    yshapes = []
+    for i in range(len(all_colour_locations)):
+        
+        yshape,xshape = colour_array[i].shape
+        print(colour_array[i])
+        print(xshape)
+        print(yshape)
+        xshapes.append(xshape)
+        yshapes.append(yshape)
+        #print(colour_array[i])
+        
+
+        for x in range(yshape):
+            for y in range(xshape):
+                #print(colour_array[i][x][y])
+                #print(all_colours[i])
+                if colour_array[i][x][y] != all_colours[i] and colour_array[i][x][y] != base_colour:
+                    colour_array[i][x][y] = base_colour
+            #we parse a certain way
+        #print(colour_array[i])
+
+    #right now we are ready to go
+    #we need to get the biggest dimensions first both x and y 
+    
+    
+    max_xshape = max(xshapes)
+    max_yshape = max(yshapes)
+
+    print(max_xshape)
+    print(max_yshape)
+    
+    
+    #so now we need to compare the shape of each to the maximum
+    #and if there is a difference we must append a row 
+    #of base colours to the start and the end
+    print("")
+    print("")
+    for i in range(len(all_colour_locations)):
+        y_shape, x_shape = colour_array[i].shape
+        
+        print(x_shape)
+        print(y_shape)
+        values_to_add_y = np.full(max_yshape,base_colour)
+        values_to_add_x = np.full(max_yshape,base_colour)
+        values_to_add_x.shape = (max_yshape,1)
+        
+        print(values_to_add_y)
+        print(values_to_add_x)
+  
+        if max_xshape - x_shape == 2:
+            print(colour_array[i])
+            print(values_to_add_y)
+            colour_array[i] = np.append(colour_array[i], values_to_add_x, axis = 1)
+            colour_array[i] = np.append(values_to_add_x, colour_array[i] , axis = 1)
+            print("we neeed to add a row")
+            print(colour_array[i])
+    
+        if max_yshape - y_shape == 2:
+            print(colour_array[i])
+            print(values_to_add_y)
+            colour_array[i] = np.vstack([colour_array[i], values_to_add_y])
+            colour_array[i] = np.vstack([values_to_add_y, colour_array[i]])
+            print("we neeed to add a column")
+            print(colour_array[i])
+         
+            
+    print(all_colours)
+    return x
 
 
 def main():
@@ -598,12 +774,12 @@ def test(taskID, solve, data):
     for xtest, y in zip(train_input, train_output):
         yhat = solve(xtest)
         print("starting")
-        show_result(xtest, y, yhat)
-        #return
+        #show_result(xtest, y, yhat)
+        return
     print("Test grids")
-    for x, y in zip(test_input, test_output):
-        yhat = solve(x)
-        show_result(x, y, yhat)
+    #for x, y in zip(test_input, test_output):
+        #yhat = solve(x)
+        #show_result(x, y, yhat)
 
         
 def show_result(xtest, y, yhat):
