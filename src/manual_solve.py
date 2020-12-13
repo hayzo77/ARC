@@ -107,19 +107,39 @@ def get_new_location(centre, position):
 
 def solve_484b58aa(x):
     
-    print(x)
+    #EXPLANATION
     """
-    with this one we need to be able to detect the diagonal pattern
-    if the next diagonal square is the same as the previous then all are that colour
-    if not we will store the colour in a colour array and then move on
+    This problem was difficult to solve
+    firstly the squares have patterns when we look diagonally
+    we need to get each diagonal pattern
+    these patterns then repeat themselves every n diagonals both left and right
     """
+    
+    #PROCESS
+    """
+    First we need to isolate each diagonal so we can see its pattern
+    then we need to train to see how many diagonals before that pattern appears again
+    By doing this we now have the pattern of the square
+    Then we can assign each diagonal its pattern 
+    Then using this pattern we can go to the diagonals that have zeros
+    and we can check to see the value before the zero
+    then we can use the pattern assigned to that diagonal to predict the next value
+    This works great and solves all the training and test problems
+    """
+    
+    #FIRST WE NEED TO GET ALL THE DIAGONALS AND PUT THEM INTO LISTS
+    #NUMPY DOES HAVE A DIAGONAL METHOD WHICH WORKS WELL FOR THE FIRST HALF OF DIAGONALS
+    #TO DO SO I MAKE THE SQUARE BIGGER AND BIGGER
+    #IE 1x1 - GET DIAGONAL, 2x2 - GET DIAGONAL ALL THE WAY TO 30x30
+    #THIS GIVES THE FIRST HALF
+    
     first_half = []
 
     xdimension, ydimension = x.shape   
     if xdimension == ydimension:
         dimension = xdimension
-    #there are 30 diagonals and we need to loop through them
-    #print(dimension)
+
+
     for size_its in range(dimension):
         actual_size = size_its + 1
         array = x[:actual_size, :actual_size]
@@ -128,17 +148,14 @@ def solve_484b58aa(x):
         first_diagonals = np.flipud(array).diagonal()
         first_half.append(first_diagonals)
         
+        
+    #THEN TO GET THE SECOND HALF WE NEED TO FLIP THE NUMPY ARRAY 180 DEGREES
+    #THEN DO THE SAME PROCESS
 
-        #print(first_diagonals)
-
-    #print(array)
-    #array = np.flipud(array)
     newx = x.copy()
     newx = np.rot90(newx)
     newx = np.rot90(newx)
 
-        
-    #print(newx)
     second_half = []
     
     for size_its in range(dimension-1):
@@ -150,19 +167,23 @@ def solve_484b58aa(x):
         #print(second_diagonals)
         second_half.append(np.flip(second_diagonals))
         
-    #list of patterns
-    #we need to firstly select a half to train on 
+ 
+    #NOW WE HAVE TWO LISTS OF THE DIAGONALS 
     first = np.array(first_half)
     second = np.array(second_half)
     
-
+    #THE TRAINING SET SHOULD BE APPLIED TO THE MORE FULL SET 
+    #WHICH IS THE BOTTOM RIGHT HALF
     training_set = second
 
 
+    #GET ALL THE PATTERNS FOR THE DIAGONALS AFTER THE FIFTH IN THE TRAINING HALF
+    #WE REMOVE THE FIRST 5 AS THEY ARE USUALLY 1,2,3,4,5 SQUARES LONG
+    #WHICH MAY NOT SHOW THE FULL PATTERN
+    
     training_set = training_set[5:]
     pattern_list = []
     for diagonal in training_set:
-        #we need to get the pattern
         i = 0
         pattern = []
         for square_num in diagonal:
@@ -176,14 +197,20 @@ def solve_484b58aa(x):
                 pattern_list.append(pattern)
                 break
             
-    #print("helper1")
-    #print(pattern_list)
+    #NOW WE HAVE A LIST OF PATTERNS
+
+    #LETS GET THE LONGEST PATTERN I.E. THE MOST COMPLEX ONE
+    #THIS IS BECAUSE PATTERNS SUCH AS ALL RED SQUARES CAN OCCUR
+    #NUMEROUS TIMES IN THE DIAGONAL PATTERN
+    #THIS WOULD CAUSE AN ISSUE IN CASES SUCH AS
+    #P1,P3,P5,P3,P5,P1
+    #WE NEED TO SEACH FOR THE START AND END OF P1 TO GET THE FULL PATTERN
     longest_pattern = [len(i) for i in pattern_list]
     pattern_to_search = max(pattern_list, key=len)
-    #print(pattern_to_search)
-    #print(pattern_list)
-    #print("helper2")
+
  
+    #WE THEN REMOVE THE PATTERNS FROM THE LIST THAT COME BEFORE THE 
+    #LONGEST PATTERN AS THESE ARE NOT NEEDED
     index = 0
     exitbool = False
     for pattern in pattern_list:
@@ -192,10 +219,11 @@ def solve_484b58aa(x):
             actual_index = index
             exitbool = True
     
-    #print(pattern_list)  
     pattern_list = pattern_list[actual_index:]
-    #print(pattern_list)
     
+    
+    #NOW WE NEED TO CREATE A DICTIONARY WITH THE DIAGONAL PATTERN
+    #ADD THE FIRST/LONGEST PATTERN FIRST
     pattern_dict = {}
     all_patterns = []
     d = {1: pattern_to_search}
@@ -206,63 +234,59 @@ def solve_484b58aa(x):
     number_of_patterns = 1
     
     
+    #HERE WE APPEND TO THE PATTERN DICTIONARY UNTIL WE AGAIN REACH THE LONGEST
+    #PATTERN WHICH IS OUR REFERENCE
+    #IF WE REACH THIS WE STOP AND THEREFORE WE HAVE THE PATTERN FOR THE FULL SQUARE
     for pattern in pattern_list:
         pattern_number = pattern_number + 1
         if pattern_found == False:
-            for i in range(4):
-                #print(i)
-                #print(pattern_to_search)
-                #print(pattern)
+            #WE LOOP HERE BECAUSE WE NEED TO SHIFT THE SEARCH PATTERN
+            #WE DO THIS TO MAKE SURE IT MATCHES
+            #E.G. 2,4,5 != 5,2,4 BUT WHEN WE SHIFT THEY ARE EQUAL
+            for i in range(len(pattern_to_search)):
+
                 if np.all(pattern_to_search==pattern):
-                    #print("WE HAVE A PATTERN")
                     pattern_found = True
                 else:
-                    #we need to label each pattern
+                    #HERE WE SHIFT THE THE SEARCH PATTERN ONE BIT
                     pattern_to_search = np.roll(pattern_to_search, 1)
                     patterntoappend = {pattern_number: pattern}
                     d = {pattern_number: pattern}
+            #DONT ADD THE PATTERN UNTIL WE REACH HERE
             if pattern_found == False:
                 pattern_dict.update(d)
                 all_patterns.append(patterntoappend)
                 number_of_patterns = number_of_patterns + 1
 
                 
-        #we are checking for the pattern we will roll 5 times 
         
-    #print(all_patterns)
 
+    #NEED TO REVERSE THE SECOND SET OF DATA
     second_reversed = []
 
     for i in range(second.size):
         second_reversed.append(second[second.size - (i + 1)])
     
-    #print(first)
-    #print("first_done")
-    #print(second_reversed)
     
+    #PUT ALL THE DATA INTO ONE LIST
     all_data = []
     for i in first:
         all_data.append(i)
     for j in second_reversed:
         all_data.append(j)
 
+    #MAKE IT A NUMPY ARRAY
     all_data_numpy = np.array(all_data)        
-    #print("")
-    #print("")
-    #print(all_data_numpy.size)
     
     
-    #now we need to tag each one with their respective patttern        
-    #print(all_patterns)
-    
-    #lets take the middle one and move right by the number of patterns
-    
-    #print(number_of_patterns)
+
+    #WE DONT WANT TO LOOP MOER THAN THIS LATER
     pattern_max = 28 + number_of_patterns
-    #print(pattern_max)
     
     pattern_recognition = []
     
+    
+    #NOW WE CREATE A LIST FROM THE DIAGONALS SO WE CAN CHECK THE PATTERN WE HAVE COME UP WITH
     counter = 0
     for i in all_data_numpy:
         if counter >= 29 and counter <= pattern_max:
@@ -270,48 +294,49 @@ def solve_484b58aa(x):
         counter = counter + 1
         
     pattern_recognition = np.array(pattern_recognition)
-    #now we need to see which one matches the pattern
     
     
+    
+    
+
     pattern_size = pattern_to_search.size
-    
+
+    #THIS LOOP RETURNS THE INDEX OF THE DIAGONAL THAT MATCHES THE LONGEST/REFERENCE DIAGONAL PATTERN
     final_match_index = 0
     match_index = 28
     for pattern in pattern_recognition:
         match_index = match_index + 1
-        #print(pattern[:pattern_size])
-        #print(pattern_to_search)
-        for i in range(8):
+
+        for i in range(len(pattern_to_search)):
             if np.all(pattern_to_search==pattern[:pattern_size]):
-                #print("WE HAVE A PATTERN")
                 final_match_index = match_index
-                #pattern_found = True
             else:
-                #we need to label each pattern
                 pattern_to_search = np.roll(pattern_to_search, 1)
     
-    #print(final_match_index)
-    #pattern 1 matches index 30 so we need to iterate over all others
-    #and index them 
-    
-    #we need to take all elements after 30
-    #and take all elements before 30 
-    
+
+    #CREATE TWO LISTS OF BEFORE AND AFTER THE MATCH
+    #AS WE WILL APPLY THE PATTERNS TO THESE
     before_match_list = all_data_numpy[:final_match_index]
     after_match_list = all_data_numpy[final_match_index:]
     
-    #print(before_match_list)
-    #print("")
-    #print("")
-    #print(after_match_list)
+    """
+    NOW WE HAVE THE DIAGONAL PATTERN THAT EXISTS 
+    WE NEED TO THEN ASSIGN A PATTERN TO EACH DIAGONAL
+    THIS IS EASY BECAUSE WE ALREADY KNOW THE PATTERN AND WE HAVE 
+    A INDEX FOR WHERE THIS PATTERN STARTS
+    """
     
+    #CREATE A LIST OF ZEROS WHICH WILL REPRESENT THE PATTERN NUMBER FOR EACH DIAGONAL
     pattern_index_list = np.zeros((all_data_numpy.size,), dtype=int)
-    #print(pattern_index_list)
     
-    #now we need to loop through each and assign pattern value to each
+    #FIRST LOOK AT ALL THE ONES TO THE LEFT OF THE REFERENCE/LONGEST PATTERN
     idx = (before_match_list.size)  
     patternidx = 1
     count = 0
+    #HERE WE ASSIGN EACH ONE A PATTERN VALUE BASED ON OUT DIAGONAL PATTERN
+    #E.G. DIAGONAL PATTERN IS 1,2,3,4,5,6
+    #PATTERN 6 IS LOCATED AT INDEX OF 14
+    #THEN WE ASSIGN INDEX 13 A VALUE OF 1 THEN INDEX 12 IS 2 AND SO ON
     for l in before_match_list:
         
         pattern_index_list[idx] = patternidx
@@ -324,224 +349,163 @@ def solve_484b58aa(x):
         idx = idx - 1
         count = count + 1
 
-    #if pattern last was 2
-    #decrement by 1 
     
-    #print("key")
-    #print(pattern_index_list)
-    
+    #NOW WE DO THE SAME FOR TO THE RIGHT OF THE INDEX EXCEPT WE ASSIGN 
+    #THE PATTERN IN A BACKWARDS MANNER
+    #6,5,4,3,2,1
     patternidx = patternidx - 2
     if patternidx == 0:
         patternidx = number_of_patterns - 1
         
-    #print("essential")
-    #print(number_of_patterns)
-    #print(patternidx)
     idx = (before_match_list.size)
-    #print("absolutely key")
-    #print(idx)
     patternidx = 1
-    #print(pattern_index_list)
-    #print(after_match_list)
-    
     loopfor = pattern_index_list.size - count
-    #print(loopfor)
-    #print(count)
+
     for l in range(loopfor):
-        
-        
-        pattern_index_list[idx] = patternidx
-        
+             
+        pattern_index_list[idx] = patternidx     
         if patternidx == 1:
             patternidx = number_of_patterns
-        #elif patternidx == number_of_patterns:
-            #patternidx = 1        
         else:
             patternidx = patternidx - 1
-        #print(idx)
         idx = idx + 1
         
-    #nowe we have 2 lists
-    #one for each diagonal array
-    #and one with that arrays corresponding pattern
+
+    #NOW I HAVE A LIST WITH THE PATTERN FOR EACH DIAGONAL
+    #AND A LIST WITH THE DIAGONAL 
+    #BOTH OF THESE MATCH INDEX WISE    
     
-    #list_names
-    """
-    #pattern_index_list
-    #all_data_numpy
-    #all_patterns
-    """
     
-    print(pattern_index_list)
-    #print(all_data_numpy)
-    print(all_patterns)
-    
-    #all_patterns = all_patterns[0]
-    
-    #print("")
-    #print("")
-    #print(pattern_dict)
-    #now we need to loop through each line of the original data
-    #if there is a zero in it 
-    #we need to get its previous digit and fix the zero
-    #by using its dedicated pattern
+    #THE NEXT STEP IS TO USE THIS DATA TO PREDICT THE VALUES WHERE THERE ARE ZEROS
     
     i = 0
     new_data = []
     for data in all_data_numpy:
-        #print("i")
-        #print(i)
-        #print("data 0")
-        #print(data[0])
-        
+
+        #WE USE THE PREVIOUS VALUE TO PREDICT THE CURRENT ONE
+        #IF THE FIRST SQUARE HAS A VALUE OF 0
+        #THEN WE NEED TO FLIP THE ARRAY BECAUSE THEN WE HAVE A FIRST VALUE
+        #TO GUESS FROM
         backwards_approach = False
         if data[0] == 0:
-            print(data)
             backwards_approach = True 
             data = np.flip(data)
-            print(data)
-            #we are going to have to have a different approach
 
+        #GET THE INDEX OF THE PATTERN 
         patternkey = pattern_index_list[i]
         updated_data = []
         if len(data) == 1:
             updated_data.append(data[0])
             
+        #SOMETIMES THE KEY CAN BE 0 FOR THE CORNERS
         if(patternkey != 0):
-            #lets get the pattern for each array of data
-            #print(patternkey)
-            #now we need to lookup the actual pattern
+
+            #GET THE PATTERN FROM THE DICTIONARY USING THE KEY
             actual_pattern = pattern_dict[patternkey]
-            #print("should be actual pattern", actual_pattern)
             old_square = 50
-            #print(data)
             first_square = 0
+            
+            #LOOP THROUGH EACH SQUARE IN THE DIAGONAL DATA
             for square in data:
                 first_square = first_square + 1
                 
+                #IF THE FIRST VALUE IS 0 THEN WE NEED TO REVERSE THE PATTERN
                 if backwards_approach == True and first_square == 1:
                     new_pattern = list(actual_pattern)
                     pattern = new_pattern.reverse()
-                    #new_pattern.append(pattern)
-                    #new_pattern = list(new_pattern)
-                    print("reversed")
-                    print(new_pattern)
                     
-                    
+                #IF THE SQAURE IS 0 WE NEED TO DO A PREDICTION
                 if square == 0:
-                    #we need to update the sqaure 
-                    #print("old square",{old_square})
-                    #print("")
                     
+                    #IF THE PATTERN LENGTH IS 1 THEN ALL SQUARES ARE THE SAME
                     if len(actual_pattern) == 1:
                         square = old_square
                         updated_data.append(square)
                     else:
-                        #here we need to check the pattern
-                        #print("need word")
-                        
+                                                
                         if backwards_approach == False:
                             new_pattern = list(actual_pattern)
                         
-                        
                         detected = False
+                        
+                        #WE ARE SHIFTING THE PATTERN EACH TIME IT DOESNT MATCH SO WE LOOP OVER THE FULL PATTERN SIZE
                         for j in range(len(new_pattern)):
-                            #print("new pattern first element",{new_pattern[0]})
-                            #print("old square", {old_square})
-                            #print("detected",{detected})
                             
-                            if backwards_approach == False:
-                                if new_pattern[0] == old_square and detected == False:
-                                    updated_data.append(new_pattern[1])
-                                    #print("should be new word", {new_pattern[1]})
-                                    detected = True
-                                    old_square = new_pattern[1]
-    
-                                else:
-                                    new_pattern = np.roll(new_pattern, 1)
-                            elif backwards_approach == True:
-                                print("key")
-                                print(old_square)
-                                print(new_pattern)
-                                print()
-                                if new_pattern[0] == old_square and detected == False:
-                                    updated_data.append(new_pattern[1])
-                                    #print("should be new word", {new_pattern[1]})
-                                    detected = True
-                                    old_square = new_pattern[1]
-    
-                                else:
-                                    new_pattern = np.roll(new_pattern, 1)                          
+
+                            #IF THE FIRST VALUE OF THE PATTERN IS EQUAL TO THE LAST SQUARE
+                            #THEN WE CAN SAY THE NEXT VALUE SHOULD BE THE SECOND VALUE IN THE PATTERN
+                            if new_pattern[0] == old_square and detected == False:
+                                updated_data.append(new_pattern[1])
+                                detected = True
+                                old_square = new_pattern[1]
+                            
+                            #OTHERWISE WE SHIFT THE PATTERN ONE SPACE TO THE RIGHT
+                            #AND TRY AGAIN
+                            else:
+                                new_pattern = np.roll(new_pattern, 1)
+                         
                                 
                                 
-                                
-                    #update old_square
+                #IF THE SQAURE IS NOT 0 THEN WE ADD IT TO THE LIST 
+                #AND SET OLDSQUARE TO THE CURRENT SQUARE FOR THE NEXT ITERATION
                 else:
                     updated_data.append(square)
                     old_square = square
         i = i + 1
-        #print(updated_data)
         
+        #WE HAVE HAD TO REVERSE THE DATA SO BEFORE WE ADD IT TO THE LIST
+        #WE NEED TO FLIP IT BACK TO NORMAL
         if backwards_approach == True:
             updated_data = updated_data[::-1]
             new_data.append(updated_data)
             
+        #NOT REVERSED SO ADD
         else:
             new_data.append(updated_data)
         
-    #print(new_data)
-    #now we have to fill the dataset back up 
+    """
+    NOW WE HAVE A LIST OF ALL THE DIAGONALS AND THEY ARE CORRECTED AND WE
+    NEED TO PIECE THESE BACK TOGETHER 
+    """
     
-    
-    
-    
-    
-    #final_np_array = np.array(30,30)
-    
-    #print(x)
-    
+    #WE DO THE SAME PROCESS AS HOW WE EXTRACTED THE DIAGONALS
+    #EXCEPT WE USE np.fill_diagonal TO FILL THE DIAGONAL WITH THE NEW VALUES
+    #INCREMENTALLY MAKE THE SQUARE BIGGER AND ADD THE NEW DIAGONAL
     for size_its in range(dimension):
         actual_size = size_its + 1
         array = x[:actual_size, :actual_size]
-        #print(array)
         np.fill_diagonal(np.flipud(array), new_data[size_its])
         data_size = size_its
 
-    #print(x)
+    #AS BEFORE THIS HAS ONLY DONE HALF AND NOW THE OTHER HALF MUST BE DONE    
+
+    #CREATE A COPY OF X AND ROTATE IT 180 DEGREES SO WE CAN APPEND TO THE DIAGONALS
     xcopy = x.copy()
     xcopy = np.rot90(xcopy)
     xcopy = np.rot90(xcopy)   
-    #print("xcopy")
-    #print(xcopy)
-    
+
     c = 0
 
+    #SAME PROCESS AS ABOVE EXCEPT WE START WITH A BIG GRID AND MAKE IT SMALLER
+    #ALSO WE HAVE TO REVERSE THE DATA WE ARE PUTTING INTO THE DIAGONAL
+    #THIS IS BECAUSE WE HAVE FILLPED THE ARRAY
+    #ALSO NOT WE ARE ADDING THE SECOND HALF OF THE DATA 
+    
     for size_its in reversed(range(dimension)):
-        #print(size_its)
         actual_size = size_its + 1
         array = xcopy[:actual_size, :actual_size]
-        
-        #print(new_data[data_size+c])
-        
-        #dat = new_data[data_size+c]
-        #print(dat)
-        #reverse_data = dat.reverse()
-        #print(reverse_data)
+
         dat = new_data[data_size+c]
-        #print(dat[::-1])
-        #np.fill_diagonal(np.flipud(array), new_data[data_size+c])
+
         np.fill_diagonal(np.flipud(array), dat[::-1])
 
         c = c + 1
         
-    #print("xcopy after")
-    #print(xcopy)
     
+    #FLIP THE FINAL DATA AGAIN 180 DEGREES SO ITS BACK TO NORMAL
     xcopy = np.rot90(xcopy)
     xcopy = np.rot90(xcopy)
     
-    #print(xcopy)
-    #print(x)
     
     return xcopy
 
