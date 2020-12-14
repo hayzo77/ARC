@@ -1,4 +1,20 @@
-# The Abstraction and Reasoning Corpus (ARC)
+# Programming Tools fo AI Assignment 3
+
+The Abstraction and Reasoning Corpus repository (explianed in the next section) has been forked to my repository in order to be able to solve 3 of the tasks outlined in this corpus. The problems I have chosen to solve are:
+
+- 3631a71a
+- 484b58aa
+- c8cbb738
+
+The code for each solution is located in the ARC/src/manual_solve.py file. In this file there is a function for each task. These function names are:
+
+- solve_3631a71a
+- solve_484b58aa
+- solve_c8cbb738
+
+The aim of the function is to return a correct solution for each of the training and test problems it encounters and each function does so sucessfully.
+
+## The Abstraction and Reasoning Corpus (ARC)
 
 This repository contains the ARC task data, as well as a browser-based interface for humans to try their hand at solving the tasks manually.
 
