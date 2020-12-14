@@ -8,10 +8,76 @@ import re
 """
 LUKE HAYES
 14498098
-
+https://github.com/hayzo77/ARC
 """
 
 
+
+"""PYTHON FEATURES USED AND COMMONALITIES
+
+THERE ARE NO LIBRARIES USED IN ANY OF THESE SOLUTIONS.
+EACH SOLUTIONS SIMPLY USES STANDARD PYTHON AND NUMPY.
+HERE ARE SOME OF THE NUMPY FUNCTIONS USED IN THE SOLUTIONS:
+
+Solution 1
+1) Standard numpy arrays and get the values from the arrays using array[axis0][axis1] 
+2) Standard python arrays
+    
+Solution 2
+1) np.flipud().diagonal() - this is used to get the diagonal of the array from the bottom left to the top right
+   This is used to isolate each diagonal so we can put them in an array and train on them
+2) .copy() creates a new copy of the array
+3) np.rot90() this rotates the current array 90 degrees and I use this twice to flip it 180 degrees to get the diagonals for the second half of the original array
+4) np.roll() is used to rotate the pattern we are looking for by one place
+   e.g. pattern = 2,3,4,5 after = 5,2,3,4 this is useful when we are trying to get the previous square value so we can use the pattern to predict the next
+5) np.all(a==b) to check if two numpy values are equal
+6) np.fill_diagonal() this is used to put the diagonal values back into the original numpy array
+7) np.zeros() to create numpy arrays of a secific size which values will later be added to
+8) Standard numpy arrays and get the values from the arrays using array[axis0][axis1] 
+9) Standard python arrays
+    
+Solution 3
+1) np.zeros() to create numpy arrays of a secific size which values will later be added to
+2) np.append and np.vstack are both used to add both rows and columns to the shape arrays to make them the same size
+3) np.full() this creates a numpy array with a certain value and a certain size
+4) Standard numpy arrays and get the values from the arrays using array[axis0][axis1] 
+5) Standard python arrays
+    
+    
+COMMONALITIES BETWEEN THEM
+-EACH SOLUTION USES NUMPY AND STANDARD PYTHON ARRAYS 
+-THE MAIN SIMILARITIES ARE THAT EACH PROBLEM DEALS WITH PATTERNS AND IN ORDER TO SLOVE THE PROBLEM
+ THE PATTERNS HAVE TO BE LEARNED
+-THIS PATTERN SIMILARITY IS VERY SIMILAR IN PROBLEMS ONE AND TWO AS BOTH PROBLES REQUIRE LEARNING THE PATTERN
+ AND THEN SOLVING IT ALTOUGH BOTH PATTERNS ARE VERY DIFFERENT
+ 
+DIFFERENCES
+-THERE ARE QUITE BIG DIFFERENCES IN HOW THESE PROBLEMS ARE SOLVED AS EACH PROBLEM DIFFERS FROM THE NEXT
+-IN PROBLEM ONE THE PATTERN IS LARGE AND IS REPEATED IN EACH OF THE 4 SQUARES OF THE INPUT ARRAY
+ PROBLEM TWO HAS A PATTERN THAT OCCURS ACCROSS THE DIAGONALS OF THE INPUT ARRAY
+ PROBLEM THREE HAS A SERIES OF SHAPES THAT NEED TO BE EXTRACTED AND THEN PLACED ON TOP OF ONE ANOTHER WHILE ALSO BEING CENTERED 
+"""
+
+
+
+
+""" OPTIONAL COMMENTS ON THE ISSUES PRESENT IN THIS APPROACH
+
+ONE SUCH ISSUE THAT I HAVE NOTICED IS THE LACK OF DIVERSITY IN THE TRAINING 
+AND TEST EXAMPLES. I THINK THAT HAVING SO FEW EXAMPLES TO TRAIN ON MEANS 
+THAT THERE ARE LIKELY SHORTCOMINGS IN THE CODE. FOR EXAMPLE IN ONE PROBLEM
+I TRAIN IN THE SECOD HALF OF THE DATA BECAUSE ALL THE MISSING VALUES ARE IN
+THE FIRST HALF. THIS MEANS THAT IF I WAS TRYING TO SOLVE A TEST PROBLEM,
+WHERE THERE WAS DATA MISSING WHEN TRAINING THE PATTERN, THE SOLUTION WOULD
+BE INCORRECT. THE LACK OF DIVERSITY IN EACH OF THE TRAINING PROBLEMS MEANS 
+THAT SOLUTIONS CAN BE CODED IN SUCH A WAY THAT THEY WORK FOR THESE EXAMPLES
+BUT DON'T WORK FOR OTHERS WHICH IS NOT WHAT WE WANT. THIS MEANS THAT THE 'INTELLIGENCE'
+ELEMENT THAT WE ARE LOOKING FOR IS MISSING.
+
+ANOTHER POSSIBLE ISSUE IS THAT THE RESULT IS EITHER TRUE OR FALSE AND PERHAPS
+IF THERE WAS A VALUE RETURNED BETWEEN 0 AND 1 WOULD BE A BETTER FOR TRAINING.
+
+"""
 
 #THIS FUNCTION RETURNS THE NEW POSITION
 #IT WILL RETURN A NEW X VALUE OR Y VALUE
@@ -24,15 +90,32 @@ def get_new_location(centre, position):
 
 
 def solve_3631a71a(x):
-    """
+    
+    """TASK VERBAL DESCRIPTION
     There is one square that can be split into 4 sqaures that match perfectly
-    The centre of this is not in the centre of the main square
-    This means that there are values that are outside the square and therefore do not match all the other squares
-    This means if there is a value we need to fix (a value of 9) then we must look for the sqaure that has that value and use that
-    The soltuion fixes all Training and Test squares
+    The centre of this is not in the centre of the input array which adds difficulty to the problem
+    This means tht there is a square in the input array that can be split into 4 seperate squares that mirror eachother
+    Therefore if we have a vlue of 9 we can lookup the correctly value by looking at any of the other 3 squares
+    However since the symmetric area is not in the centre this means that there are areas that are not mirrored in all the other squares
+    In this case this area is also mirrored by the other areas that are outside the symetric square and therefore we can use these values
     """
+    
+    
+    """
+    PROBLEMS SOLVED - ALL TEST AND TRAINING PROBLEMS
+    """
+    
+    
+    """HOW SOLVE WORKS"""
+    #LOOP THROUGH EACH SQUARE
+    #IF THE SQUARE VALUE IS 9
+    #IF IN SQUARE 1 TAKE FROM SQUARE 2 AND VICE VERSA
+    #IF IN SQUARE 3 TAKE FROM SQUARE 4 AND VICE VERSA
+    #IF OUTSIDE SQUARE ONE TO THE LEFT TAKE FROM TO THE LEFT OF SQUARE 2 AND VICE VERSA
+    #IF ABOVE SQUARE ONE TAKE FROM ABOVE SQUARE 2 AND VICE VERSA
+    #PROBLEM SOLVED
 
-    print("starting here")
+
     xlen, ylen = x.shape
     
     xcounter = 1
@@ -143,25 +226,32 @@ def solve_3631a71a(x):
 
 def solve_484b58aa(x):
     
-    #EXPLANATION
-    """
+    """TASK VERBAL DESCRIPTION
     This problem was difficult to solve
-    firstly the squares have patterns when we look diagonally
+    firstly the squares have patterns when we look diagonally such as 1,2,3,1,2,3
     we need to get each diagonal pattern
-    these patterns then repeat themselves every n diagonals both left and right
+    these patterns then repeat themselves every n diagonals both left and right such as (1,1,1), (2,2,2,2), (2,3,2,3,2), (1,1,1,1,1,1)
+    Therfore the key to solving this problem is to learn these patterns and then apply them as rules when we are trying to predict the value of a square
     """
     
-    #PROCESS
     """
-    First we need to isolate each diagonal so we can see its pattern
-    then we need to train to see how many diagonals before that pattern appears again
-    By doing this we now have the pattern of the square
-    Then we can assign each diagonal its pattern 
-    Then using this pattern we can go to the diagonals that have zeros
-    and we can check to see the value before the zero
-    then we can use the pattern assigned to that diagonal to predict the next value
-    This works great and solves all the training and test problems
+    PROBLEMS SOLVED - ALL TEST AND TRAINING PROBLEMS
     """
+    
+ 
+    """HOW SOLVE WORKS"""
+    #TAKE ALL THE DIAGONAL DATA FROM THE ORIGINAL ARRAY AND PUT THEM INTO THEIR OWN ARRAY AND CREATE AN ARRAY TO STORE THEM ALL
+    #GET THE PATTERN FOR EACH DIAGONAL 
+    #TRAIN ON THE DIAGONAL DATA WITH THE LEAST AMOUNT OF MISSING DATA TO GET THE DIAGONAL PATTERN
+    #ASSIGN A PATTERN TO EACH DIAGONAL
+    #FOR EACH DIAGONAL IF IT HAS A 0 VALUE USE ITS ASSIGNED PATTERN AND THE PREVIOUS SQUARE VALUE TO PREDICT QHAT VALUE THE 0 SHOULD BE
+    #IN SOME CASES THE DIAGONAL DATA WILL START WITH A 0 THEN WE HAVE NO PREVIOUS DATA
+    #IN THIS CASE WE REVERSE THE PATTERN AND THE DIAGONAL DATA AND MAKE A PREDICTION THIS WAY
+    #PUT ALL THE DIAGONALS BACK TOGETHER TO MAKE THE ARRAY WE RETURN
+    
+    
+    
+    
     
     #FIRST WE NEED TO GET ALL THE DIAGONALS AND PUT THEM INTO LISTS
     #NUMPY DOES HAVE A DIAGONAL METHOD WHICH WORKS WELL FOR THE FIRST HALF OF DIAGONALS
@@ -359,7 +449,7 @@ def solve_484b58aa(x):
     NOW WE HAVE THE DIAGONAL PATTERN THAT EXISTS 
     WE NEED TO THEN ASSIGN A PATTERN TO EACH DIAGONAL
     THIS IS EASY BECAUSE WE ALREADY KNOW THE PATTERN AND WE HAVE 
-    A INDEX FOR WHERE THIS PATTERN STARTS
+    AN INDEX FOR WHERE THIS PATTERN STARTS
     """
     
     #CREATE A LIST OF ZEROS WHICH WILL REPRESENT THE PATTERN NUMBER FOR EACH DIAGONAL
@@ -389,6 +479,8 @@ def solve_484b58aa(x):
     #NOW WE DO THE SAME FOR TO THE RIGHT OF THE INDEX EXCEPT WE ASSIGN 
     #THE PATTERN IN A BACKWARDS MANNER
     #6,5,4,3,2,1
+    #PATTERN 6 IS LOCATED AT INDEX 14
+    #THEN WE ASSIGN INDEX 15 A PATTERN VALUE OF 5
     patternidx = patternidx - 2
     if patternidx == 0:
         patternidx = number_of_patterns - 1
@@ -548,8 +640,7 @@ def solve_484b58aa(x):
 
 def solve_c8cbb738(x):
     
-    """
-    SHORT EXPLANATION
+    """TASK VERBAL DESCRIPTION
     The method I chose to solve this problem was to isolate each pattern and 
     create a new array for each pattern. I then extracted the locations for each 
     shape and then I classed the shape as a symetric rectangle or not
@@ -559,31 +650,24 @@ def solve_c8cbb738(x):
     I then got the dimensions for the arrays that held the shapes.
     To put them altogether I had the arrays with the shapes in them the same size.
     Once this was done putting them altogether was easy.
-    
-    This again worked with all training and test problems.
     """
     
     """
-    HERE ARE THE STEPS
-    1) GET THE BASE COLOUR AND ALL THE COLOOURS OF THE PATTERNS
-    2) GET THE LOCATIONS IN THE ARRAY FOR EACH COLOUR. THIS GIVES US THE LOCATIONS FOR EACH SHAPE
-    3) CREATE A COPY OF THE ORIGINAL NUMPY ARRAY FOR EACH SHAPE/PATTERN
-    4) WITH THIS COPY WE THEN REMOVE THE DATA THAT IS NOT TO DO WITH THAT SPECIFIC SHAPE
-    5) NOW WE HAVE ALL THE RELVENT SHAPES IN THEIR OWN NUMPY ARRAY
-    6) THESE SHAPES CAN BE OF DIFFERENT SIZES AND IN ORDER TO PUT THEM BACK TOGETHER THEY NEED TO BE THE SAME SIZE
-    7) I THEN DO SOME WORK TO ADD SOME OF THE BACKGROUND COLOUR TO MAKE ALL THE NUMPY ARRAYS THAT STORE THE SHAPES THE SAME SIZE
-    8) FINALLY I CREATED A BLANK NUMPY ARRAY AND INDIVIDUALLY ADD EACH SHAPE TO THE ARRAY
+    PROBLEMS SOLVED - ALL TRAINING AND TEST PROBLEMS.
     """
     
-    """
-    LIBRARIES AND TOOLS USED
-    I JUST USED NUMPY AND THE FUNCTIONS THAT COME WITH THAT
-    SUCH AS: np.zeros to create an array of zeros
-    copy to create new copies of the original array
-    np.all() to see if two values are equal
-    np.vstack() is used to add to the arrays that contain the shape- we need these to be the same size so we use this to add more
-    to that array
-    """
+    
+    """HOW SOLVE WORDS"""
+    #GET THE BASE COLOUR AND ALL THE COLOURS OF THE PATTERNS
+    #GET THE LOCATIONS IN AN ARRAY FOR EACH COLOUR. THIS GIVES US THE LOCATIONS OF EACH SQUARE OF EACH SHAPE
+    #CREATE A COPY OF THE ORIGINAL NUMPY ARRAY FOR EACH SHAPE/PATTERN
+    #WITH THIS COPY WE THEN REMOVE THE DATA THAT IS NOT TO DO WITH THAT SPECIFIC SHAPE
+    #NOW WE HAVE ALL THE RELVENT SHAPES IN THEIR OWN NUMPY ARRAY
+    #THESE SHAPES CAN BE OF DIFFERENT SIZES AND IN ORDER TO PUT THEM BACK TOGETHER THEY NEED TO BE THE SAME SIZE
+    #I THEN DO SOME WORK TO ADD SOME OF THE BACKGROUND COLOUR TO MAKE ALL THE NUMPY ARRAYS THAT STORE THE SHAPES THE SAME SIZE
+    #FINALLY I CREATED A BLANK NUMPY ARRAY AND INDIVIDUALLY ADD EACH SHAPE TO THE ARRAY
+    
+
     
     #get the shape of the input
     xlen, ylen = x.shape
