@@ -1,4 +1,4 @@
-# Programming Tools fo AI Assignment 3
+# Programming Tools for AI Assignment 3
 
 The Abstraction and Reasoning Corpus repository (explianed in the next section) has been forked to my repository in order to be able to solve 3 of the tasks outlined in this corpus. The problems I have chosen to solve are:
 
